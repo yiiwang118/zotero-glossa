@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "Glossa for Zotero",
+  "version": "0.2.0",
+  "description": "Chat with papers, translate selections, organize conversations and save research notes.",
+  "author": "yiiwang",
+  "icons": {
+    "48": "icon.svg",
+    "96": "icon.svg"
+  },
+  "applications": {
+    "zotero": {
+      "id": "glossa-zotero@yiiwang118",
+      "update_url": "https://github.com/yiiwang118/zotero-glossa/releases/latest/download/updates.json",
+      "strict_min_version": "10.0.6",
+      "strict_max_version": "10.*"
+    }
+  },
+  "homepage_url": "https://github.com/yiiwang118/zotero-glossa"
+}

@@ -1,0 +1,15 @@
+dist/
+.cache/
+node_modules/
+.env
+.env.*
+*.key
+*.pem
+*.log
+.DS_Store
+.idea/
+.vscode/
+# Local runtime data and history backups do not belong in the source repository.
+state.json
+state.json.*
+glossa-zotero/

@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  zotero:
+    name: Zotero checks + XPI
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Check and build Glossa for Zotero
+        run: npm run check
+      - name: Upload Zotero package and checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: glossa-zotero-${{ github.sha }}
+          path: |
+            dist/*.xpi
+            dist/*.sha256
+            dist/updates.json
+          if-no-files-found: error
+          retention-days: 7

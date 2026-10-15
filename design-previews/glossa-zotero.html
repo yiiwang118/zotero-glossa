@@ -1,0 +1,190 @@
+<div id="gz-plan">
+  <style>
+    #gz-plan { --gz-bg: light-dark(#ffffff,#22252b); --gz-panel: light-dark(#f5f6f8,#1c1e23); --gz-paper: light-dark(#fffefb,#2b2d32); --gz-ink: light-dark(#252a33,#e4e7ed); --gz-muted: light-dark(#697080,#a5adbb); --gz-line: light-dark(#e1e5ec,#3e444f); --gz-blue: light-dark(#3568b1,#96baff); --gz-soft: light-dark(#edf3fc,#28354b); --gz-mark: light-dark(#fff0b8,#62542c); --gz-chat-width: 374px; color:var(--gz-ink); font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    #gz-plan * { box-sizing:border-box; }
+    #gz-plan [hidden] { display:none !important; }
+    #gz-plan .gz-window { background:var(--gz-bg); border:1px solid var(--gz-line); border-radius:12px; overflow:clip; min-height:680px; }
+    #gz-plan .gz-title { display:flex; align-items:center; gap:10px; padding:12px 110px 12px 16px; background:var(--gz-panel); border-bottom:1px solid var(--gz-line); flex-wrap:wrap; }
+    #gz-plan .gz-title strong { font-weight:600; }
+    #gz-plan .gz-tag { font-size:11px; color:var(--gz-muted); }
+    #gz-plan .gz-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,var(--gz-chat-width)); min-height:632px; }
+    #gz-plan button, #gz-plan input, #gz-plan select, #gz-plan textarea { font:inherit; color:inherit; }
+    #gz-plan button { border:1px solid var(--gz-line); background:var(--gz-bg); padding:5px 10px; border-radius:7px; }
+    #gz-plan button:hover { background:var(--gz-soft); }
+    #gz-plan button:disabled { opacity:.5; }
+    #gz-plan .gz-icon { padding:5px 7px; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+    #gz-plan .gz-icon svg { width:16px; height:16px; }
+    #gz-plan .gz-muted { color:var(--gz-muted); font-size:12px; }
+    #gz-plan .gz-reader { background:var(--gz-panel); padding:16px; min-width:0; }
+    #gz-plan .gz-toolbar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:14px; }
+    #gz-plan .gz-paper { padding:28px; background:var(--gz-paper); border:1px solid var(--gz-line); border-radius:3px; min-height:492px; }
+    #gz-plan .gz-paper h2 { font:600 23px/1.25 Georgia,serif; margin:8px 0 12px; }
+    #gz-plan .gz-paper h3 { font:600 17px/1.4 Georgia,serif; margin:23px 0 8px; }
+    #gz-plan .gz-paper p { font:15px/1.8 Georgia,serif; margin:10px 0; }
+    #gz-plan .gz-selection { background:var(--gz-mark); padding:2px; }
+    #gz-plan .gz-selection-actions { display:flex; flex-wrap:wrap; gap:5px; margin:12px 0; }
+    #gz-plan .gz-assistant { border-left:1px solid var(--gz-line); display:flex; flex-direction:column; min-width:0; }
+    #gz-plan .gz-header { padding:12px 14px; display:flex; gap:8px; align-items:center; border-bottom:1px solid var(--gz-line); }
+    #gz-plan .gz-brand { font-weight:600; margin-right:auto; display:flex; gap:7px; align-items:center; }
+    #gz-plan .gz-brand svg { color:var(--gz-blue); width:20px; height:20px; }
+    #gz-plan .gz-tabs { display:flex; gap:6px; padding:9px 13px; border-bottom:1px solid var(--gz-line); }
+    #gz-plan .gz-tabs button { border-color:transparent; padding:4px 9px; }
+    #gz-plan button[aria-pressed="true"] { color:var(--gz-blue); background:var(--gz-soft); }
+    #gz-plan .gz-transcript { padding:17px 16px; flex:1; min-height:305px; }
+    #gz-plan .gz-user { background:var(--gz-panel); border-radius:12px 12px 3px 12px; padding:10px 13px; margin:0 0 18px 35px; }
+    #gz-plan .gz-answer { margin:8px 0 12px; }
+    #gz-plan .gz-answer p { margin:8px 0; }
+    #gz-plan .gz-evidence { font-size:12px; color:var(--gz-blue); display:flex; gap:6px; align-items:center; margin:8px 0; }
+    #gz-plan .gz-evidence button { color:var(--gz-blue); font-size:12px; padding:3px 7px; }
+    #gz-plan .gz-progress { color:var(--gz-muted); font-size:12px; }
+    #gz-plan .gz-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:15px; }
+    #gz-plan .gz-composer { margin:0 12px 10px; padding:10px; border:1px solid var(--gz-line); border-radius:14px; background:var(--gz-bg); }
+    #gz-plan .gz-controls { display:flex; gap:7px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    #gz-plan .gz-chip { display:flex; gap:4px; align-items:center; min-width:0; max-width:118px; font-size:12px; background:var(--gz-panel); padding:4px 7px; border-radius:16px; }
+    #gz-plan .gz-chip span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    #gz-plan .gz-pickers { display:flex; margin-left:auto; min-width:0; max-width:100%; }
+    #gz-plan .gz-pickers select { width:auto; max-width:92px; border:1px solid var(--gz-line); background:var(--gz-bg); padding:4px 2px; font-size:11px; border-radius:0; }
+    #gz-plan .gz-pickers select:first-child { border-radius:6px 0 0 6px; max-width:48px; }
+    #gz-plan .gz-pickers select:last-child { border-radius:0 6px 6px 0; max-width:98px; }
+    #gz-plan textarea { display:block; width:100%; resize:vertical; min-height:75px; border:0; background:transparent; padding:12px 2px; font-size:14px; }
+    #gz-plan .gz-bottom { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; }
+    #gz-plan .gz-mode { display:flex; gap:2px; }
+    #gz-plan .gz-mode button { font-size:12px; padding:3px 8px; border-color:transparent; }
+    #gz-plan .gz-effort { width:68px; padding:3px 6px; border:1px solid var(--gz-line); border-radius:5px; background:var(--gz-bg); font-size:12px; }
+    #gz-plan .gz-send { background:var(--gz-soft); color:var(--gz-blue); margin-left:auto; }
+    #gz-plan .gz-footer { min-height:25px; margin:0 16px 8px; color:var(--gz-muted); font-size:11px; }
+    #gz-plan .gz-history, #gz-plan .gz-save { padding:16px; flex:1; min-height:305px; }
+    #gz-plan .gz-history h3, #gz-plan .gz-save h3 { font-size:15px; margin:4px 0 12px; }
+    #gz-plan .gz-folder { display:block; text-align:left; width:100%; margin:6px 0; padding:9px; }
+    #gz-plan .gz-preview { margin:12px 0; background:var(--gz-panel); padding:12px; border-radius:8px; }
+    #gz-plan .gz-save label { display:block; margin:9px 0; color:var(--gz-muted); font-size:12px; }
+    #gz-plan .gz-save input { display:block; width:100%; padding:7px; border:1px solid var(--gz-line); background:var(--gz-bg); border-radius:6px; }
+    #gz-plan .gz-library { padding:20px; min-width:0; background:var(--gz-panel); }
+    #gz-plan .gz-library h2 { font-size:19px; margin:0 0 5px; }
+    #gz-plan .gz-library-list { padding:0; margin:18px 0; list-style:none; }
+    #gz-plan .gz-library-list li { display:flex; gap:9px; align-items:flex-start; border-bottom:1px solid var(--gz-line); padding:14px 0; }
+    #gz-plan .gz-library-list input { margin-top:5px; accent-color:var(--gz-blue); }
+    #gz-plan .gz-library-list strong { display:block; font-weight:500; }
+    #gz-plan .gz-library-list small { color:var(--gz-muted); font-size:12px; }
+    #gz-plan .gz-table { width:100%; border-collapse:collapse; font-size:12px; margin:12px 0; }
+    #gz-plan .gz-table th, #gz-plan .gz-table td { text-align:left; border-bottom:1px solid var(--gz-line); padding:8px 4px; }
+    #gz-plan .gz-table th { font-weight:500; color:var(--gz-muted); }
+    #gz-plan .gz-facts { padding:12px 0; border-top:1px solid var(--gz-line); font-size:12px; }
+    @media(max-width:700px) { #gz-plan .gz-layout { grid-template-columns:1fr; } #gz-plan .gz-assistant { border-left:0; border-top:1px solid var(--gz-line); } #gz-plan .gz-reader,#gz-plan .gz-library { padding:12px; } #gz-plan .gz-paper { padding:18px; min-height:0; } #gz-plan .gz-paper .gz-detail { display:none; } #gz-plan .gz-window { min-height:0; } }
+    @media(pointer:coarse) { #gz-plan button, #gz-plan select, #gz-plan input { min-height:44px; } #gz-plan textarea { font-size:16px; } }
+  </style>
+  <div class="viz-carousel" aria-label="Glossa 在 Zotero 中的使用场景" data-previous-label="上个场景" data-next-label="下个场景">
+    <section data-variant="阅读侧栏">
+      <div class="gz-window" aria-label="论文阅读与 Glossa 侧栏">
+        <div class="gz-title"><strong>Zotero</strong><span>文献库 / Adaptive Memory…</span><span class="gz-tag">界面草案 · 示例文献</span></div>
+        <div class="gz-layout">
+          <main class="gz-reader">
+            <div class="gz-toolbar"><span class="gz-muted gz-page">第 4 / 12 页</span><span class="gz-muted">100% · PDF</span></div>
+            <article class="gz-paper">
+              <div class="gz-muted">RESEARCH ARTICLE · 示例内容</div>
+              <h2>Adaptive Memory<br>for Research Agents</h2>
+              <p class="gz-muted">Lin et al. · 2026</p>
+              <h3>3. Method</h3>
+              <p><span class="gz-selection">The agent stores a compact record of verified evidence and retrieves only the entries relevant to the current research question.</span></p>
+              <div class="gz-selection-actions"><button type="button" data-action="translate">翻译</button><button type="button" data-action="explain">解释</button><button type="button" data-action="attach">加入对话</button></div>
+              <p class="gz-detail">Each record retains the source document and page location. Before a note is revised, the current content is checked against the saved snapshot.</p>
+              <h3 class="gz-detail">3.1 Evidence and attribution</h3>
+              <p class="gz-detail">A claim is linked to the passage that supports it. Missing or unreadable evidence is reported explicitly.</p>
+            </article>
+          </main>
+          <aside class="gz-assistant" data-scene="reader"></aside>
+        </div>
+      </div>
+    </section>
+    <section data-variant="研究工作台" hidden>
+      <div class="gz-window" aria-label="Glossa 独立研究窗口">
+        <div class="gz-title"><strong>Glossa</strong><span>研究工作台 · 独立窗口</span><span class="gz-tag">界面草案 · 示例文献</span></div>
+        <div class="gz-layout">
+          <main class="gz-library">
+            <h2>Agent 记忆研究</h2><div class="gz-muted">文献来源 / 我的文库 / Agent 研究</div>
+            <ul class="gz-library-list">
+              <li><input type="checkbox" checked aria-label="包含 Adaptive Memory"><div><strong>Adaptive Memory for Research Agents</strong><small>Lin et al. · 2026 · PDF 已就绪</small></div></li>
+              <li><input type="checkbox" checked aria-label="包含 Evidence Guided Planning"><div><strong>Evidence-Guided Planning</strong><small>Chen et al. · 2025 · PDF 已就绪</small></div></li>
+              <li><input type="checkbox" checked aria-label="包含 Retrieval and Reflection"><div><strong>Retrieval and Reflection in Research</strong><small>Wang et al. · 2026 · 仅摘要</small></div></li>
+            </ul>
+            <div class="gz-facts"><strong>阅读范围</strong><p>2 篇全文 · 1 篇摘要。回答会标注来源范围。</p></div>
+            <div class="gz-facts"><strong>我的批注</strong><p>“如何避免过时记忆影响下一次检索？”</p><span class="gz-muted">Adaptive Memory… · p.4</span></div>
+          </main>
+          <aside class="gz-assistant" data-scene="library"></aside>
+        </div>
+      </div>
+    </section>
+  </div>
+  <template id="gz-assistant-template">
+    <header class="gz-header"><span class="gz-brand"><i data-lucide="messages-square" aria-hidden="true"></i>Glossa</span><button type="button" class="gz-icon" data-action="history" aria-label="历史目录"><i data-lucide="history" aria-hidden="true"></i></button><button type="button" class="gz-icon" data-action="new" aria-label="新建对话"><i data-lucide="plus" aria-hidden="true"></i></button></header>
+    <nav class="gz-tabs" aria-label="会话范围"><button type="button" aria-pressed="true" data-action="scope">本篇论文</button><button type="button" aria-pressed="false" data-action="evidence">来源</button></nav>
+    <div class="gz-transcript"><div class="gz-user">这篇论文的记忆机制有什么特点？</div><div class="gz-progress">已读取正文 p.3–5 与 2 条批注</div><div class="gz-answer"><p>它把<strong>已验证的证据</strong>保存为精简记录，再按研究问题检索相关内容。</p><p>回答中的结论保留原文位置，后续修改前也会检查已有内容。</p></div><div class="gz-evidence"><button type="button" data-action="cite">Lin 2026 · p.4 ↗</button><span>原文证据</span></div><div class="gz-actions"><button type="button" data-action="save">存为条目笔记</button><button type="button" data-action="remember">记住这次纠正</button></div></div>
+    <div class="gz-history" hidden><h3>历史目录</h3><button type="button" class="gz-folder" data-action="folder">▾ Agent 记忆研究 <span class="gz-muted">3</span></button><button type="button" class="gz-folder" data-action="resume">Adaptive Memory · 方法讨论</button><button type="button" class="gz-folder" data-action="folder">▸ 待写综述 <span class="gz-muted">2</span></button><button type="button" class="gz-folder" data-action="folder">未分类 <span class="gz-muted">1</span></button><button type="button" data-action="back">返回对话</button></div>
+    <div class="gz-save" hidden><h3>创建条目笔记</h3><div class="gz-muted">归属：Adaptive Memory…</div><label>标题<input value="论文方法与阅读记录" aria-label="笔记标题"></label><div class="gz-preview"><strong>方法摘要</strong><p>按问题检索已验证证据，保留来源与页码。</p><span class="gz-muted">来源：Lin 2026 · p.4</span></div><div class="gz-muted gz-save-hint">切换到 Act 后确认写入。</div><div class="gz-actions"><button type="button" data-action="confirm" disabled>确认创建</button><button type="button" data-action="back">返回修改</button></div></div>
+    <div class="gz-composer"><div class="gz-controls"><div class="gz-chip"><i data-lucide="file-text" aria-hidden="true"></i><span>Adaptive Memory…</span></div><div class="gz-pickers"><select aria-label="运行方式" data-field="runtime"><option>API</option><option>CLI</option></select><select aria-label="提供方或软件" data-field="provider"><option>DeepSeek</option><option>OpenAI</option><option>Anthropic</option></select><select aria-label="模型" data-field="model"><option>deepseek-chat</option><option>deepseek-reasoner</option></select></div></div><textarea aria-label="消息" placeholder="问这篇论文 · @ 添加文献 · / 工作流"></textarea><div class="gz-bottom"><div class="gz-mode"><button type="button" aria-pressed="true" data-action="plan">Plan</button><button type="button" aria-pressed="false" data-action="act">Act</button></div><input class="gz-effort" aria-label="推理强度" list="gz-efforts" value="自动"><button type="button" class="gz-icon gz-send" data-action="send" aria-label="发送示例消息"><i data-lucide="arrow-up" aria-hidden="true"></i></button></div></div>
+    <div class="gz-footer" role="status" aria-live="polite">Plan · 只读分析</div>
+  </template>
+  <datalist id="gz-efforts"><option value="自动"></option><option value="low"></option><option value="medium"></option><option value="high"></option></datalist>
+  <script>
+    (() => {
+      const root = document.getElementById('gz-plan');
+      const template = document.getElementById('gz-assistant-template');
+      const options = { width:374 };
+      const saved = window.openai?.widgetState?.privateContent;
+      const sessions = {};
+      const models = { DeepSeek:['deepseek-chat','deepseek-reasoner'], OpenAI:['已配置模型'], Anthropic:['已配置模型'], Codex:['CLI 默认模型','检测到的模型'], 'Claude Code':['CLI 默认模型','检测到的模型'], Grok:['CLI 默认模型','检测到的模型'] };
+      function persist() { window.openai?.setWidgetState?.({modelContent:{zoteroUI:'阅读侧栏与独立研究窗口',panelWidth:options.width},privateContent:{sessions,width:options.width}})?.catch(()=>{}); }
+      function widthRender() { root.style.setProperty('--gz-chat-width',options.width+'px'); }
+      root.querySelectorAll('.gz-assistant').forEach(panel => {
+        panel.append(template.content.cloneNode(true));
+        const scene=panel.dataset.scene;
+        let mode=saved?.sessions?.[scene]?.mode==='act'?'act':'plan';
+        const q=s=>panel.querySelector(s);
+        const footer=q('.gz-footer');
+        const show=name=>{ ['transcript','history','save'].forEach(key=>{q('.gz-'+key).hidden=key!==name;}); };
+        const setMode=value=>{ mode=value; ['plan','act'].forEach(m=>q('[data-action="'+m+'"]').setAttribute('aria-pressed',String(m===mode))); q('[data-action="confirm"]').disabled=mode!=='act'; q('.gz-save-hint').textContent=mode==='act'?'确认后创建新笔记，原有笔记保留。':'切换到 Act 后确认写入。'; footer.textContent=mode==='act'?'Act · 修改前预览确认':'Plan · 只读分析'; sessions[scene]={mode}; };
+        setMode(mode);
+        if(scene==='library') {
+          q('[data-action="scope"]').textContent='所选 3 篇';
+          q('.gz-chip span').textContent='3 篇文献';
+          q('.gz-user').textContent='比较这三篇论文如何使用记忆。';
+          q('.gz-progress').textContent='已读取 2 篇全文 · 1 篇仅有摘要';
+          q('.gz-answer').innerHTML='<table class="gz-table"><thead><tr><th>文献</th><th>侧重点</th></tr></thead><tbody><tr><td>Lin 2026</td><td>证据记忆</td></tr><tr><td>Chen 2025</td><td>规划与核验</td></tr><tr><td>Wang 2026</td><td>检索与反思*</td></tr></tbody></table><p class="gz-muted">* 仅依据摘要，实验细节待核对。</p>';
+          q('[data-action="save"]').textContent='保存比较笔记';
+          q('.gz-save > .gz-muted').textContent='归属：Agent 研究 / 独立笔记';
+        }
+        const setOptions=(select,values)=>select.replaceChildren(...values.map(value=>{const o=document.createElement('option');o.textContent=value;return o;}));
+        q('[data-field="runtime"]').addEventListener('change',e=>{setOptions(q('[data-field="provider"]'),e.target.value==='CLI'?['Codex','Claude Code','Grok']:['DeepSeek','OpenAI','Anthropic']);setOptions(q('[data-field="model"]'),models[q('[data-field="provider"]').value]);footer.textContent=e.target.value==='CLI'?'CLI 模型检索 · 界面演示':'使用已配置的 API 模型 · 界面演示';});
+        q('[data-field="provider"]').addEventListener('change',e=>setOptions(q('[data-field="model"]'),models[e.target.value]));
+        panel.addEventListener('click',event=>{
+          const action=event.target.closest('[data-action]')?.dataset.action;
+          if(!action)return;
+          if(action==='plan'||action==='act'){setMode(action);persist();}
+          else if(action==='history')show('history');
+          else if(action==='save')show('save');
+          else if(action==='back'||action==='resume'){show('transcript');footer.textContent=action==='resume'?'已打开示例会话':'返回对话';}
+          else if(action==='confirm'){show('transcript');footer.textContent='示例：笔记已创建，包含文献来源链接。';}
+          else if(action==='cite'){const paper=panel.closest('.gz-layout').querySelector('.gz-selection');if(paper){paper.style.outline='2px solid var(--gz-blue)';paper.scrollIntoView({block:'nearest',behavior:'smooth'});}footer.textContent='原文定位：Adaptive Memory… · p.4';}
+          else if(action==='evidence'){footer.textContent=scene==='reader'?'来源：正文 p.3–5，批注 2 条。':'来源：2 篇全文、1 篇摘要。';}
+          else if(action==='remember'){footer.textContent='学习草稿：编辑纠正 → 验证示例 → 确认启用。';}
+          else if(action==='folder'){footer.textContent='目录独立于 Zotero 分类；会话可另行关联文献。';}
+          else if(action==='new'){show('transcript');q('.gz-user').textContent='新对话';q('.gz-answer').textContent='从一篇论文、选区或几篇文献开始。';q('textarea').value='';footer.textContent='示例：新对话已就绪。';}
+          else if(action==='send'){const value=q('textarea').value.trim();if(!value){footer.textContent='请先填写问题。';return;}show('transcript');q('.gz-user').textContent=value;q('.gz-answer').textContent='这里将流式显示回答，并附上可返回原文的来源。此草案不会调用模型。';q('textarea').value='';footer.textContent='交互演示 · 未发送网络请求';}
+        });
+      });
+      root.querySelectorAll('.gz-selection-actions button').forEach(button=>button.addEventListener('click',()=>{
+        const panel=root.querySelector('[data-scene="reader"]');
+        const action=button.dataset.action;
+        panel.querySelector('.gz-history').hidden=true;panel.querySelector('.gz-save').hidden=true;panel.querySelector('.gz-transcript').hidden=false;
+        if(action==='attach'){panel.querySelector('.gz-chip span').textContent='选区 · p.4';panel.querySelector('textarea').value='解释这段话，并联系本文的方法。';}
+        else{panel.querySelector('.gz-user').textContent=action==='translate'?'翻译所选段落':'解释所选段落';panel.querySelector('.gz-answer').textContent=action==='translate'?'Agent 保存经过验证的证据的精简记录，并且只检索与当前研究问题有关的条目。':'这里的记忆不是完整保存全部对话，而是保留经过核验的证据，并根据当前问题按需取用。';}
+        panel.querySelector('.gz-footer').textContent='选区来源已保留 · p.4 · 示例内容';
+      }));
+      root.querySelectorAll('.gz-library-list input').forEach(input=>input.addEventListener('change',()=>{const count=root.querySelectorAll('.gz-library-list input:checked').length;const panel=root.querySelector('[data-scene="library"]');panel.querySelector('.gz-chip span').textContent=count+' 篇文献';panel.querySelector('[data-action="scope"]').textContent='所选 '+count+' 篇';panel.querySelector('.gz-footer').textContent='下次请求将使用新选择的 '+count+' 篇文献。';}));
+      if(saved?.width>=320&&saved.width<=440)options.width=saved.width;
+      widthRender();
+      if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:()=>{widthRender();persist();}});tweak.addSlider(options,'width',{label:'Glossa 面板宽度',min:320,max:440,step:10,unit:'px'});}
+      window.addEventListener('openai:set_globals',event=>{const restored=event.detail?.globals?.widgetState?.privateContent;if(restored?.width>=320&&restored.width<=440){options.width=restored.width;widthRender();}});
+    })();
+  </script>
+</div>

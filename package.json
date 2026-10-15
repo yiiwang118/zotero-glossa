@@ -1,0 +1,40 @@
+{
+  "name": "glossa-zotero",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Glossa research assistant for Zotero: chat with papers, translate selections and save notes",
+  "author": "yiiwang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yiiwang118/zotero-glossa.git"
+  },
+  "homepage": "https://github.com/yiiwang118/zotero-glossa#readme",
+  "bugs": {
+    "url": "https://github.com/yiiwang118/zotero-glossa/issues"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint src --max-warnings=0",
+    "test": "node tests/run.mjs",
+    "test:browser": "node tests/browser.mjs",
+    "build": "node build.mjs",
+    "verify": "node verify.mjs",
+    "release:check": "node scripts/check-release.mjs",
+    "check": "npm run release:check && npm run typecheck && npm run lint && npm test && npm run build && npm run verify"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.1",
+    "eslint": "9.39.5",
+    "globals": "17.7.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.63.0"
+  },
+  "dependencies": {
+    "temml": "0.13.5"
+  }
+}
