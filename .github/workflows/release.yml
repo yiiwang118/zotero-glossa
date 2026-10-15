@@ -17,11 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      # No dependency cache for releases: the published XPI is always built from a clean npm ci.
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
-          cache: 'npm'
       - name: Verify release tag
         env:
           RELEASE_TAG: ${{ github.ref_name }}
@@ -36,7 +36,7 @@ jobs:
         run: node scripts/release-notes.mjs "$RELEASE_TAG" > dist/release-notes.md
       # updates.json must ship with every release: the plugin's update_url reads it from the latest release.
       - name: Publish XPI, checksum and update manifest
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref_name }}
           name: Glossa for Zotero ${{ github.ref_name }}
