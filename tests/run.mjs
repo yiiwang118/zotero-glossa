@@ -391,6 +391,18 @@ test('answers render LaTeX as MathML and handle rules, emphasis, nested lists an
   assert.deepEqual(m.inlineParts('a $$b$$ c').map(p => p.kind), ['text', 'math', 'text']);
   assert.match(m.systemPrompt('plan', 'English'), /LaTeX[^]*\$\.\.\.\$[^]*\$\$\.\.\.\$\$/);
 });
+test('markdown tables keep pipes inside inline code spans within their cell', () => {
+  const blocks = m.markdownBlocks([
+    '| Expression | Meaning |',
+    '| --- | --- |',
+    '| `a | b` | bitwise OR |',
+    '| ``x ` y | z`` | double-backtick span |',
+    '| a\\|b | escaped pipe |',
+  ].join('\n'));
+  assert.deepEqual(blocks, [{ kind: 'table', rows: [
+    ['Expression', 'Meaning'], ['`a | b`', 'bitwise OR'], ['``x ` y | z``', 'double-backtick span'], ['a|b', 'escaped pipe'],
+  ] }]);
+});
 test('notes keep formulas in Zotero note math format', () => {
   const source = { id: 'S1', kind: 'metadata', title: 'P', excerpt: '', item: paper };
   const html = m.noteHTML('t', '公式 $a<b^2$\n\n$$\\sum_i a_i$$\n\n---\n\n- a\n  - b\n\n*注*', [source], () => 'zotero://select/library/items/PAPER001');
