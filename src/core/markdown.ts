@@ -27,7 +27,27 @@ export function inlineParts(text: string): Inline[] {
     index % 2 ? [token(part)] : part ? [{ kind: 'text', text: part.replace(/\\\$/g, '$') }] : []);
 }
 
-const cells = (line: string): string[] => line.trim().replace(/^\|/, '').replace(/\|$/, '').split(/(?<!\\)\|/).map(c => c.trim().replace(/\\\|/g, '|'));
+const cells = (line: string): string[] => {
+  const values: string[] = []; let value = ''; let codeTicks = 0; let slashRun = 0;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '\\') { value += char; slashRun++; continue; }
+    if (char === '`') {
+      let end = i + 1;
+      while (line[end] === '`') end++;
+      const ticks = end - i;
+      if (codeTicks === ticks) codeTicks = 0;
+      else if (!codeTicks && slashRun % 2 === 0) codeTicks = ticks;
+      value += line.slice(i, end); i = end - 1; slashRun = 0; continue;
+    }
+    if (char === '|' && !codeTicks && slashRun % 2 === 0) { values.push(value); value = ''; slashRun = 0; continue; }
+    value += char; slashRun = 0;
+  }
+  values.push(value);
+  if (!values[0]?.trim()) values.shift();
+  if (!values.at(-1)?.trim()) values.pop();
+  return values.map(cell => cell.trim().replace(/\\\|/g, '|'));
+};
 const LIST = /^(\s*)(?:([-*+])|(\d+)[.)])\s+(.+)$/;
 const RULE = /^\s{0,3}([-*_])(?:\s*\1){2,}\s*$/;
 const indent = (spaces: string): number => spaces.replace(/\t/g, '    ').length;
