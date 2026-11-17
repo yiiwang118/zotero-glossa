@@ -28,6 +28,9 @@ export function inlineParts(text: string): Inline[] {
 }
 
 const cells = (line: string): string[] => {
+  // An unmatched delimiter is literal text. Index runs once so checking for a closer stays linear.
+  const lastTicks = new Map<number, number>();
+  for (const match of line.matchAll(/`+/g)) lastTicks.set(match[0].length, match.index);
   const values: string[] = []; let value = ''; let codeTicks = 0; let slashRun = 0;
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
@@ -37,7 +40,7 @@ const cells = (line: string): string[] => {
       while (line[end] === '`') end++;
       const ticks = end - i;
       if (codeTicks === ticks) codeTicks = 0;
-      else if (!codeTicks && slashRun % 2 === 0) codeTicks = ticks;
+      else if (!codeTicks && slashRun % 2 === 0 && (lastTicks.get(ticks) ?? -1) > i) codeTicks = ticks;
       value += line.slice(i, end); i = end - 1; slashRun = 0; continue;
     }
     if (char === '|' && !codeTicks && slashRun % 2 === 0) { values.push(value); value = ''; slashRun = 0; continue; }

@@ -403,6 +403,19 @@ test('markdown tables keep pipes inside inline code spans within their cell', ()
     ['Expression', 'Meaning'], ['`a | b`', 'bitwise OR'], ['``x ` y | z``', 'double-backtick span'], ['a|b', 'escaped pipe'],
   ] }]);
 });
+test('markdown tables treat unmatched backticks as text without swallowing later cells', () => {
+  const rows = [
+    ['| `unfinished | explanation |', ['`unfinished', 'explanation']],
+    ['| ``mismatched` | explanation |', ['``mismatched`', 'explanation']],
+    ['| `a | b` and `unfinished | explanation |', ['`a | b` and `unfinished', 'explanation']],
+    ['| \\`literal | next |', ['\\`literal', 'next']],
+    ['| `a\\` | next |', ['`a\\`', 'next']],
+    ['| a\\|', ['a|']],
+  ];
+  for (const [row, expected] of rows) {
+    assert.deepEqual(m.markdownBlocks(`| Expression | Meaning |\n| --- | --- |\n${row}`)[0].rows.at(-1), expected, row);
+  }
+});
 test('notes keep formulas in Zotero note math format', () => {
   const source = { id: 'S1', kind: 'metadata', title: 'P', excerpt: '', item: paper };
   const html = m.noteHTML('t', '公式 $a<b^2$\n\n$$\\sum_i a_i$$\n\n---\n\n- a\n  - b\n\n*注*', [source], () => 'zotero://select/library/items/PAPER001');
